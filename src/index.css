@@ -97,6 +97,10 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 @layer utilities {
@@ -107,4 +111,26 @@ All colors MUST be HSL.
   .story-link {
     @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-red-600 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
   }
+
+  /* Responsividade melhorada */
+  @media (max-width: 768px) {
+    .responsive-text {
+      @apply text-sm;
+    }
+    
+    .responsive-padding {
+      @apply px-4 py-2;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .mobile-full {
+      @apply w-full;
+    }
+  }
+}
+
+/* Animações suaves para transição de tema */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
