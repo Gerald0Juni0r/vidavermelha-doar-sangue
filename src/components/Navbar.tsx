@@ -2,9 +2,8 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, Menu, X, User, Calendar, LogOut, Settings } from "lucide-react";
+import { Heart, Menu, X, User, Calendar, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -55,7 +54,6 @@ const Navbar = () => {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center space-x-4">
-            <ThemeToggle />
             {isLoggedIn ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-muted-foreground">
@@ -85,8 +83,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile/Tablet menu button */}
-          <div className="lg:hidden flex items-center space-x-2">
-            <ThemeToggle />
+          <div className="lg:hidden">
             <button
               className="p-2"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
