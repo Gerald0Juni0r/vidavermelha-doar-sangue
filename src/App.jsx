@@ -457,7 +457,7 @@ const AreaDoador = () => {
 };
 
 // Componente Principal da Aplicação
-const App = () => {
+const AppContent = () => {
   const [currentSection, setCurrentSection] = useState('inicio');
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { isLoggedIn } = useAuth();
@@ -582,18 +582,24 @@ const App = () => {
   };
 
   return (
+    <div className="app">
+      <Navbar />
+      <main className="main-content">
+        {renderContent()}
+      </main>
+      <Footer />
+      
+      {showLoginModal && (
+        <LoginForm onClose={() => setShowLoginModal(false)} />
+      )}
+    </div>
+  );
+};
+
+const App = () => {
+  return (
     <AuthProvider>
-      <div className="app">
-        <Navbar />
-        <main className="main-content">
-          {renderContent()}
-        </main>
-        <Footer />
-        
-        {showLoginModal && (
-          <LoginForm onClose={() => setShowLoginModal(false)} />
-        )}
-      </div>
+      <AppContent />
     </AuthProvider>
   );
 };
