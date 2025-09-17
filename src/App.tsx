@@ -36,14 +36,6 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
-            <Route 
-              path="/admin" 
-              element={
-                <ProtectedRoute requireAdmin>
-                  <Admin />
-                </ProtectedRoute>
-              } 
-            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

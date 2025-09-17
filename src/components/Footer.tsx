@@ -24,14 +24,13 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Links Rápidos */}
+           {/* Links Rápidos */}
           <div>
             <h3 className="text-lg font-semibold mb-4">Links Rápidos</h3>
             <ul className="space-y-2">
               <li><Link to="/como-doar" className="text-gray-300 hover:text-white transition-colors">Como Doar</Link></li>
               <li><Link to="/agendamento" className="text-gray-300 hover:text-white transition-colors">Agendamento</Link></li>
               <li><Link to="/area-doador" className="text-gray-300 hover:text-white transition-colors">Área do Doador</Link></li>
-              <li><Link to="/admin" className="text-gray-300 hover:text-white transition-colors">Admin</Link></li>
             </ul>
           </div>
 

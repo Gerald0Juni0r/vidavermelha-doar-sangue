@@ -3,21 +3,60 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Heart, Calendar, Award, Clock, User, Droplet, TrendingUp } from "lucide-react";
+import { Heart, Calendar, Award, Clock, User, Droplet, TrendingUp, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AreaDoador = () => {
+  const { user, isAdmin } = useAuth();
+
   // Mock data - seria vindo da API
   const doadorData = {
-    name: "Maria Silva Santos",
-    bloodType: "O-",
+    name: user?.name || "Maria Silva Santos",
+    bloodType: user?.bloodType || "O-",
     totalDonations: 8,
     lastDonation: "2024-02-15",
     nextEligibleDate: "2024-05-15",
     status: "active"
   };
+
+  // Mock data para agendamentos do dia (área do coletor)
+  const todayAppointments = [
+    {
+      id: 1,
+      donorName: "Carlos Eduardo Silva",
+      bloodType: "O+",
+      lastDonation: "2023-12-15",
+      scheduledTime: "09:00",
+      status: "confirmed"
+    },
+    {
+      id: 2,
+      donorName: "Fernanda Lima Costa",
+      bloodType: "A-",
+      lastDonation: "2024-01-20",
+      scheduledTime: "10:30",
+      status: "pending"
+    },
+    {
+      id: 3,
+      donorName: "Roberto Santos Oliveira",
+      bloodType: "AB+",
+      lastDonation: "2023-11-08",
+      scheduledTime: "14:00",
+      status: "confirmed"
+    },
+    {
+      id: 4,
+      donorName: "Ana Carolina Ferreira",
+      bloodType: "B-",
+      lastDonation: "2024-02-01",
+      scheduledTime: "15:30",
+      status: "confirmed"
+    }
+  ];
 
   const donationHistory = [
     { date: "2024-02-15", location: "São Paulo - Centro", status: "completed" },
@@ -54,10 +93,17 @@ const AreaDoador = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Área do <span className="text-red-600">Doador</span>
+              {isAdmin ? (
+                <>Área do <span className="text-red-600">Coletor</span></>
+              ) : (
+                <>Área do <span className="text-red-600">Doador</span></>
+              )}
             </h1>
             <p className="text-xl text-gray-600">
-              Acompanhe seu histórico de doações e impacto na comunidade
+              {isAdmin 
+                ? "Gerencie os agendamentos do dia e colete sangue"
+                : "Acompanhe seu histórico de doações e impacto na comunidade"
+              }
             </p>
           </div>
 
@@ -129,92 +175,147 @@ const AreaDoador = () => {
       <section className="py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
-          {/* Donation History */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-6 w-6 text-red-600" />
-                Histórico de Doações
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {donationHistory.map((donation, index) => (
-                  <div key={index} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                    <div>
-                      <div className="font-semibold">{new Date(donation.date).toLocaleDateString('pt-BR')}</div>
-                      <div className="text-gray-600 text-sm">{donation.location}</div>
-                    </div>
-                    <Badge variant="secondary" className="bg-green-100 text-green-800">
-                      Concluída
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Achievements */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Award className="h-6 w-6 text-red-600" />
-                Conquistas
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
-                {achievements.map((achievement, index) => (
-                  <div key={index} className={`p-4 rounded-lg border-2 ${
-                    achievement.earned 
-                      ? 'border-green-200 bg-green-50' 
-                      : 'border-gray-200 bg-gray-50'
-                  }`}>
-                    <div className="flex items-center gap-3">
-                      <achievement.icon className={`h-8 w-8 ${
-                        achievement.earned ? 'text-green-600' : 'text-gray-400'
-                      }`} />
-                      <div>
-                        <div className={`font-semibold ${
-                          achievement.earned ? 'text-green-900' : 'text-gray-600'
-                        }`}>
-                          {achievement.title}
+          {isAdmin ? (
+            /* Área do Coletor - Agendamentos do Dia */
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-6 w-6 text-red-600" />
+                  Agendamentos de Hoje
+                </CardTitle>
+                <p className="text-gray-600 mt-2">
+                  {new Date().toLocaleDateString('pt-BR', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {todayAppointments.map((appointment) => (
+                    <div key={appointment.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="font-semibold">{appointment.donorName}</h3>
+                          <Badge variant="outline" className="bg-red-50 text-red-700">
+                            {appointment.bloodType}
+                          </Badge>
+                          <Badge className={
+                            appointment.status === 'confirmed' 
+                              ? "bg-green-100 text-green-800" 
+                              : "bg-yellow-100 text-yellow-800"
+                          }>
+                            {appointment.status === 'confirmed' ? 'Confirmado' : 'Pendente'}
+                          </Badge>
                         </div>
-                        <div className="text-sm text-gray-600">{achievement.description}</div>
+                        <div className="text-sm text-gray-600 space-y-1">
+                          <p><strong>Última doação:</strong> {new Date(appointment.lastDonation).toLocaleDateString('pt-BR')}</p>
+                          <p><strong>Horário agendado:</strong> {appointment.scheduledTime}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm">
+                          <Calendar className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            /* Área do Doador - Histórico e Conquistas */
+            <>
+              {/* Donation History */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="h-6 w-6 text-red-600" />
+                    Histórico de Doações
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {donationHistory.map((donation, index) => (
+                      <div key={index} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                        <div>
+                          <div className="font-semibold">{new Date(donation.date).toLocaleDateString('pt-BR')}</div>
+                          <div className="text-gray-600 text-sm">{donation.location}</div>
+                        </div>
+                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                          Concluída
+                        </Badge>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
 
-          {/* Statistics */}
-          <div className="grid md:grid-cols-3 gap-6">
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <Heart className="h-12 w-12 text-red-600 mx-auto mb-4" />
-                <div className="text-3xl font-bold text-gray-900">{doadorData.totalDonations * 4}</div>
-                <div className="text-gray-600">Vidas que você ajudou</div>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <Droplet className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <div className="text-3xl font-bold text-gray-900">{doadorData.totalDonations * 450}ml</div>
-                <div className="text-gray-600">Total de sangue doado</div>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <TrendingUp className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <div className="text-3xl font-bold text-gray-900">12</div>
-                <div className="text-gray-600">Meses como doador</div>
-              </CardContent>
-            </Card>
-          </div>
+              {/* Achievements */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Award className="h-6 w-6 text-red-600" />
+                    Conquistas
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {achievements.map((achievement, index) => (
+                      <div key={index} className={`p-4 rounded-lg border-2 ${
+                        achievement.earned 
+                          ? 'border-green-200 bg-green-50' 
+                          : 'border-gray-200 bg-gray-50'
+                      }`}>
+                        <div className="flex items-center gap-3">
+                          <achievement.icon className={`h-8 w-8 ${
+                            achievement.earned ? 'text-green-600' : 'text-gray-400'
+                          }`} />
+                          <div>
+                            <div className={`font-semibold ${
+                              achievement.earned ? 'text-green-900' : 'text-gray-600'
+                            }`}>
+                              {achievement.title}
+                            </div>
+                            <div className="text-sm text-gray-600">{achievement.description}</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Statistics */}
+              <div className="grid md:grid-cols-3 gap-6">
+                <Card className="text-center">
+                  <CardContent className="pt-6">
+                    <Heart className="h-12 w-12 text-red-600 mx-auto mb-4" />
+                    <div className="text-3xl font-bold text-gray-900">{doadorData.totalDonations * 4}</div>
+                    <div className="text-gray-600">Vidas que você ajudou</div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="text-center">
+                  <CardContent className="pt-6">
+                    <Droplet className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                    <div className="text-3xl font-bold text-gray-900">{doadorData.totalDonations * 450}ml</div>
+                    <div className="text-gray-600">Total de sangue doado</div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="text-center">
+                  <CardContent className="pt-6">
+                    <TrendingUp className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                    <div className="text-3xl font-bold text-gray-900">12</div>
+                    <div className="text-gray-600">Meses como doador</div>
+                  </CardContent>
+                </Card>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
