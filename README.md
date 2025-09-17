@@ -2,7 +2,7 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/c292030c-94fd-4514-8d6d-76a7362df6e0
+**Site**: https://gerald0juni0r.github.io/vidavermelha-doar-sangue/
 
 ## How can I edit this code?
 
